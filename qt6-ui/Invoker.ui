@@ -6,50 +6,81 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>797</width>
-    <height>600</height>
+    <width>1226</width>
+    <height>719</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Invoker</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>0</y>
-      <width>781</width>
-      <height>551</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="vertical_layout_main">
-     <item>
-      <widget class="QTabWidget" name="tab_widget_main">
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="tab_3">
-        <attribute name="title">
-         <string>Invoke</string>
-        </attribute>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QVBoxLayout" name="vertical_layout_main" stretch="0,0,0,0">
+      <item>
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
        </widget>
-       <widget class="QWidget" name="tab_4">
-        <attribute name="title">
-         <string>Environments</string>
-        </attribute>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontal_layout_main">
+        <item>
+         <widget class="QLabel" name="label_context">
+          <property name="text">
+           <string>Context:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="combobox_contexts"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QTabWidget" name="tab_widget_main">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tab_invoke">
+         <attribute name="title">
+          <string>Invoke</string>
+         </attribute>
+        </widget>
+        <widget class="QWidget" name="tab_data">
+         <attribute name="title">
+          <string>Data</string>
+         </attribute>
+        </widget>
        </widget>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar_main">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>797</width>
+     <width>1226</width>
      <height>22</height>
     </rect>
    </property>
