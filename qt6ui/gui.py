@@ -18,3 +18,13 @@ class InvokerGUI(QMainWindow):
         message_box.setText(
             "Invoker.py is a python port of Invoker tool which lets you invoke actions on different contexts.")
         message_box.exec()
+
+
+def main():
+    app = QApplication([])
+    window = InvokerGUI()
+    app.exec()
+
+
+if __name__ == '__main__':
+    main()
