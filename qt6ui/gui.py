@@ -1,3 +1,5 @@
+import os
+
 from PyQt6 import uic
 from PyQt6.QtWidgets import *
 
@@ -7,7 +9,8 @@ class InvokerGUI(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        uic.loadUi("Invoker.ui", self)
+        module_path = os.path.dirname(__file__)
+        uic.loadUi(module_path + "/Invoker.ui", self)
         self.show()
 
         self.action_about.triggered.connect(self.handle_about)
@@ -24,6 +27,7 @@ def main():
     app = QApplication([])
     window = InvokerGUI()
     app.exec()
+    return window
 
 
 if __name__ == '__main__':
