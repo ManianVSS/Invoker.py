@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1226</width>
-    <height>719</height>
+    <width>1277</width>
+    <height>738</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,15 +43,33 @@
       </item>
       <item>
        <widget class="QTabWidget" name="tab_widget_main">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>1</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
          <number>0</number>
         </property>
         <widget class="QWidget" name="tab_invoke">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <attribute name="title">
           <string>Invoke</string>
          </attribute>
         </widget>
         <widget class="QWidget" name="tab_data">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <attribute name="title">
           <string>Data</string>
          </attribute>
@@ -67,7 +85,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1226</width>
+     <width>1277</width>
      <height>22</height>
     </rect>
    </property>
