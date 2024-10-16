@@ -1,4 +1,10 @@
+from core.models.Context import Context, VarClass
+
+
 class Step:
-    def __init__(self, name=None, data=None):
+    def __init__(self, name=None, data=None, output_ref=None):
         self.name = name
-        self.data = data if data else {}
+        variable_dict = VarClass()
+        variable_dict.update(data if data else {})
+        self.data = variable_dict
+        self.output_ref = output_ref

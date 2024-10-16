@@ -1,0 +1,15 @@
+---
+name: Get IP Address
+steps:
+  - name: run process
+    output_ref: ip address
+    data:
+      command:
+        - hostname
+        - -I
+  - name: display message
+    data:
+      message: |
+        IP address is as follows
+        ${ip address}
+        

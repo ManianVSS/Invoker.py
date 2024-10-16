@@ -2,6 +2,7 @@ import importlib
 import importlib.util
 import os
 from copy import deepcopy
+from threading import Thread
 
 import yaml
 
@@ -60,7 +61,7 @@ def init_step_definitions(step_def_package='step_definitions'):
         imported_step_def_module = dynamic_import(module_name, py_file)
 
 
-def run_invoke(invoke_name, context=None):
+def run_invoke(invoke_name, context=None, gui=None):
     if context is None:
         context = Context()
 
@@ -68,16 +69,28 @@ def run_invoke(invoke_name, context=None):
     invoke = load_invoke_file(invoke_name)
 
     print('Running invoke ', str(invoke.name))
-    for step in invoke.steps:
-        print('Running step ', str(step.name))
-        step_to_call = step.name.strip()
-        if step_to_call in step_definition_mapping.keys():
-            context._invoke_name = invoke.name
-            context._step_name = step.name
 
-            for key in step.data.keys():
-                context[key] = deepcopy(step.data[key])
+    try:
+        for step in invoke.steps:
+            print('Running step ', str(step.name))
+            step_to_call = step.name.strip()
+            if step_to_call in step_definition_mapping.keys():
+                # step_context = deepcopy(context)
+                context.invoke_name = invoke.name
+                context["step"] = step
+                output = step_definition_mapping[step_to_call](context=context, gui=gui)
+                if step.output_ref:
+                    context[step.output_ref] = output
+            else:
+                print("Step definition mapping for %s could not be found", step_to_call)
+    except Exception as e:
+        print("Exception occurred when running Invoke: ", e)
 
-            step_definition_mapping[step_to_call](context=context)
-        else:
-            print("Step definition mapping for %s could not be found", step_to_call)
+
+def trigger_invoke(invoke_name, context=None, gui=None):
+    if context is None:
+        context = Context()
+
+    thread = Thread(target=run_invoke, args=(invoke_name, context, gui))
+    thread.start()
+    return thread

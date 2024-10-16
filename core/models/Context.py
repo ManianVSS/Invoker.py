@@ -1,4 +1,4 @@
-class Context(dict):
+class VarClass(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -14,4 +14,8 @@ class Context(dict):
         elif name in self.keys():
             return self[name]
         else:
-            raise AttributeError
+            return None
+
+
+class Context(VarClass):
+    pass

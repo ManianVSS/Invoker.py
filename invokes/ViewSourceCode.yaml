@@ -1,0 +1,8 @@
+---
+name: View Source Code
+steps:
+  - name: run process
+    data:
+      command:
+        - /usr/bin/xdg-open
+        - https://github.com/manianVSS/Invoker.py

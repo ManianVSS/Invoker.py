@@ -1,0 +1,10 @@
+---
+name: Launch Terminal
+steps:
+  - name: spawn process
+    output_ref: terminal_process_id
+    data:
+      command: /usr/bin/gnome-terminal
+  - name: echo
+    data:
+      message: Process spawned is ${terminal_process_id}

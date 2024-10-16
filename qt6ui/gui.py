@@ -2,15 +2,17 @@ import os
 from functools import partial
 from pathlib import Path
 
-from PyQt6 import uic
+from PyQt6 import uic, QtCore
+from PyQt6.QtCore import pyqtSlot, pyqtSignal
 from PyQt6.QtWidgets import *
 
 from core.models.Context import Context
-from core.runner.main import init_step_definitions, run_invoke
+from core.runner.main import init_step_definitions, run_invoke, trigger_invoke
 
 
 # noinspection PyUnresolvedReferences
 class InvokerGUI(QMainWindow):
+    showMessageBox = pyqtSignal(str, str)
 
     def __init__(self):
         super().__init__()
@@ -24,6 +26,9 @@ class InvokerGUI(QMainWindow):
         cwd = os.getcwd()
         invokes = []
         self.tab_invoke.layout = QGridLayout(self.tab_invoke)
+
+        self.showMessageBox.connect(self.on_show_message_box)
+
         for root, dirs, files in os.walk(src):
             for file in files:
                 if file.endswith(".yaml"):
@@ -31,7 +36,8 @@ class InvokerGUI(QMainWindow):
                     invoke_name = Path(file).stem
                     invokes.append(invoke_file)
                     invoke_button = QPushButton(invoke_name, self)
-                    invoke_button.clicked.connect(partial(run_invoke, invoke_name=invoke_file, context=context))
+                    invoke_button.clicked.connect(
+                        partial(trigger_invoke, invoke_name=invoke_file, context=context, gui=self))
                     self.tab_invoke.layout.addWidget(invoke_button)
 
         self.show()
@@ -44,6 +50,10 @@ class InvokerGUI(QMainWindow):
         message_box.setText(
             "Invoker.py is a python port of Invoker tool which lets you invoke actions on different contexts.")
         message_box.exec()
+
+    # @pyqtSlot(str, str)
+    def on_show_message_box(self, title, text):
+        QMessageBox.information(self, title, text)
 
 
 def main():
