@@ -53,7 +53,7 @@ def run_invoke(invoke_name, context=None, gui=None):
             else:
                 logger.info("Step definition mapping for {} could not be found".format(step_to_call))
     except Exception as e:
-        logger.info("Exception occurred when running Invoke: {}".format(e))
+        logger.error("Exception occurred when running Invoke: {}".format(e))
 
 
 def trigger_invoke(invoke_name, context=None, gui=None):
