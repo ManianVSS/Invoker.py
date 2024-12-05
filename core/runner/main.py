@@ -1,14 +1,16 @@
-import importlib
-import importlib.util
-import os
-from copy import deepcopy
+import configparser
+import json
+from pathlib import Path
 from threading import Thread
 
 import yaml
 
+from . import step_definition_mapping
 from ..models.Context import Context
 from ..models.Invoke import Invoke
-from . import step_definition_mapping
+from ..utils.datautils import parse_value, deep_update
+from ..utils.importutils import get_python_files, import_module_from_file
+from ..utils.logger import logger
 
 
 def load_invoke_file(invoke_file):
@@ -18,37 +20,7 @@ def load_invoke_file(invoke_file):
             feature_object = Invoke(**invoke_raw_object)
             return feature_object
         except yaml.YAMLError as exc:
-            print(exc)
-
-
-def get_python_files(src='step_definitions'):
-    cwd = os.getcwd()
-    py_files = []
-    for root, dirs, files in os.walk(src):
-        for file in files:
-            if file.endswith(".py"):
-                py_files.append(os.path.join(cwd, root, file))
-    return py_files
-
-
-def dynamic_import(module_name_to_import, py_path):
-    module_spec = importlib.util.spec_from_file_location(module_name_to_import, py_path)
-    module = importlib.util.module_from_spec(module_spec)
-    module_spec.loader.exec_module(module)
-    return module
-
-
-def dynamic_import_from_src(src, star_import=False):
-    my_py_files = get_python_files(src)
-    for py_file in my_py_files:
-        module_name = os.path.split(py_file)[-1].strip(".py")
-        imported_module = dynamic_import(module_name, py_file)
-        if star_import:
-            for obj in dir(imported_module):
-                globals()[obj] = imported_module.__dict__[obj]
-        else:
-            globals()[module_name] = imported_module
-    return
+            logger.info(exc)
 
 
 def init_step_definitions(step_def_package='step_definitions'):
@@ -57,8 +29,8 @@ def init_step_definitions(step_def_package='step_definitions'):
 
     # Scan for each python module if it has step definitions, add them to step definition mapping
     for py_file in step_definition_module_python_files:
-        module_name = os.path.split(py_file)[-1].strip(".py")
-        imported_step_def_module = dynamic_import(module_name, py_file)
+        module_name = Path(py_file).stem
+        import_module_from_file(module_name, py_file)
 
 
 def run_invoke(invoke_name, context=None, gui=None):
@@ -68,23 +40,20 @@ def run_invoke(invoke_name, context=None, gui=None):
     # Load the invoke file to run
     invoke = load_invoke_file(invoke_name)
 
-    print('Running invoke ', str(invoke.name))
+    logger.info('Running invoke {}'.format(str(invoke.name)))
 
     try:
         for step in invoke.steps:
-            print('Running step ', str(step.name))
+            logger.info('Running step {}'.format(str(step.name)))
             step_to_call = step.name.strip()
             if step_to_call in step_definition_mapping.keys():
-                # step_context = deepcopy(context)
-                context.invoke_name = invoke.name
-                context["step"] = step
-                output = step_definition_mapping[step_to_call](context=context, gui=gui)
+                output = step_definition_mapping[step_to_call](context=context, step_data=step.data, gui=gui)
                 if step.output_ref:
                     context[step.output_ref] = output
             else:
-                print("Step definition mapping for %s could not be found", step_to_call)
+                logger.info("Step definition mapping for {} could not be found".format(step_to_call))
     except Exception as e:
-        print("Exception occurred when running Invoke: ", e)
+        logger.info("Exception occurred when running Invoke: {}".format(e))
 
 
 def trigger_invoke(invoke_name, context=None, gui=None):
@@ -94,3 +63,32 @@ def trigger_invoke(invoke_name, context=None, gui=None):
     thread = Thread(target=run_invoke, args=(invoke_name, context, gui))
     thread.start()
     return thread
+
+
+def read_environments(properties_folder: str) -> dict[str, object]:
+    environments: dict[str, Context] = {}
+    folder_path = Path(properties_folder) if properties_folder else Path('environments')
+    # Path(os.path.expanduser('~'), ".invoker")
+
+    for environment_file in folder_path.glob("**/*.ini"):
+        config = configparser.RawConfigParser()
+        config.optionxform = str
+        config.read(environment_file)
+        source_dict = {}
+        for section in config.sections():
+            source_dict[section] = {k: parse_value(v) for k, v in config[section].items()}
+        deep_update(environments, source_dict)
+
+    for environment_file in folder_path.glob("**/*.json"):
+        with open(environment_file, "r") as stream:
+            parsed_properties = json.load(stream)
+            deep_update(environments, parsed_properties)
+
+    for environment_file in folder_path.glob("**/*.yaml"):
+        with open(environment_file, "r") as stream:
+            parsed_properties = yaml.safe_load(stream.read())
+            deep_update(environments, parsed_properties)
+
+    for environment in environments.keys():
+        environments[environment] = Context(**environments[environment])
+    return environments

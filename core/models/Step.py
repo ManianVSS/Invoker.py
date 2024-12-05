@@ -1,4 +1,4 @@
-from core.models.Context import Context, VarClass
+from core.models.Context import VarClass
 
 
 class Step:
