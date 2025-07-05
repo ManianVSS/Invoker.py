@@ -39,6 +39,13 @@
         <item>
          <widget class="QComboBox" name="combobox_contexts"/>
         </item>
+        <item>
+         <widget class="QPushButton" name="clearConsoleButton">
+          <property name="text">
+           <string>Clear Console</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>

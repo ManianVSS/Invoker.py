@@ -24,3 +24,21 @@ console_handler.setFormatter(formatter)
 # Add the handlers to the logger
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
+
+
+def gui_debug(message: str, gui=None):
+    """
+    Log a debug message and optionally emit it to a GUI console.
+    """
+    logger.debug(message)
+    if gui:
+        gui.consoleTextBox.emit(message)
+
+
+def gui_info(message: str, gui=None):
+    """
+    Log an info message and optionally emit it to a GUI console.
+    """
+    logger.info(message)
+    if gui:
+        gui.consoleTextBox.emit(message)

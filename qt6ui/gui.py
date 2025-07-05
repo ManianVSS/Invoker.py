@@ -32,6 +32,7 @@ def clear_layout(layout):
 # noinspection PyUnresolvedReferences
 class InvokerGUI(QMainWindow):
     showMessageBox = pyqtSignal(str, str)
+    consoleTextBox = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
@@ -54,6 +55,9 @@ class InvokerGUI(QMainWindow):
 
         self.action_about.triggered.connect(self.handle_about)
 
+        # Connect clearConsoleButton to clear the text console
+        self.clearConsoleButton.clicked.connect(self.textConsole.clear)
+
         # combobox_contexts
 
     def load_invokes(self):
@@ -61,6 +65,7 @@ class InvokerGUI(QMainWindow):
         self.invokes = []
         clear_layout(self.tab_invoke.layout)
         self.showMessageBox.connect(self.on_show_message_box)
+        self.consoleTextBox.connect(self.textConsole.append)
 
         for invoke_file in Path(src).glob("**/*.yaml"):
             invoke_name = invoke_file.stem
