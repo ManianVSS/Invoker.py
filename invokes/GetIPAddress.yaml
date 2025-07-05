@@ -9,6 +9,7 @@ steps:
         - -I
   - name: display message
     data:
+      title: IP Address
       message: |
         IP address is as follows
         ${ip address}

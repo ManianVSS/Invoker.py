@@ -78,6 +78,9 @@
       </item>
      </layout>
     </item>
+    <item row="0" column="1">
+     <widget class="QTextBrowser" name="textConsole"/>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar_main">
@@ -86,7 +89,7 @@
      <x>0</x>
      <y>0</y>
      <width>1277</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_help">

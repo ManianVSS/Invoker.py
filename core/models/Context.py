@@ -1,3 +1,8 @@
+import json
+from copy import deepcopy
+from pathlib import Path
+
+
 class VarClass(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -8,14 +13,59 @@ class VarClass(dict):
         self[name] = value
         return value
 
-    def __getattribute__(self, name):
-        if name in dict.__dict__.keys():
-            return super().__getattribute__(name)
-        elif name in self.keys():
+    def __getattr__(self, name):
+        if name in self.keys():
             return self[name]
-        else:
-            return None
+        # raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+        return None
+
+    def load_from_json(self, json_string: str):
+        self.update(json.loads(json_string))
+
+    def load_from_json_file(self, json_file: Path):
+        self.load_from_json(json_file.read_text())
+
+    def replace_variables_in_string(self, string_to_process: str, variable_prefix='${', variable_suffix='}'):
+        replaced_string = string_to_process
+
+        for variable, value in self.items():
+            replaced_string = replaced_string.replace(variable_prefix + variable + variable_suffix, str(value))
+
+        return replaced_string
+
+    def create_copy(self):
+        copied_object = VarClass()
+        for key, value in self.items():
+            if isinstance(value, VarClass):
+                copied_object[key] = value.create_copy()
+            else:
+                copied_object[key] = deepcopy(value)
+        return copied_object
 
 
 class Context(VarClass):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def create_copy(self):
+        copied_object = Context()
+        for key, value in self.items():
+            if isinstance(value, VarClass):
+                copied_object[key] = value.create_copy()
+            else:
+                copied_object[key] = deepcopy(value)
+        return copied_object
+
+
+class TestProperties(VarClass):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def create_copy(self):
+        copied_object = TestProperties()
+        for key, value in self.items():
+            if isinstance(value, VarClass):
+                copied_object[key] = value.create_copy()
+            else:
+                copied_object[key] = deepcopy(value)
+        return copied_object

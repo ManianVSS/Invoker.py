@@ -1,3 +1,6 @@
+from core.models.Context import Context
+
+
 def replace_variables_from_dict(string_to_process, variable_dictionary, variable_prefix='${', variable_suffix='}'):
     replaced_string = string_to_process
 
@@ -7,7 +10,7 @@ def replace_variables_from_dict(string_to_process, variable_dictionary, variable
     return replaced_string
 
 
-def replace_variables(string_to_process, context, step_data, environment_dictionary):
+def replace_variables(string_to_process, context: Context, step_data, environment_dictionary):
     replaced_string = string_to_process
 
     # Replacement in the priority order
@@ -18,5 +21,5 @@ def replace_variables(string_to_process, context, step_data, environment_diction
     return replaced_string
 
 
-def replace_variables_in_str_array(string_array, context, step_data, environment_dictionary):
+def replace_variables_in_str_array(string_array, context: Context, step_data, environment_dictionary):
     return [replace_variables(string_item, context, step_data, environment_dictionary) for string_item in string_array]
